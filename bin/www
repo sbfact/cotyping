@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-var common = require('./config/env/common');
+var common = require('../config/env/common');
 var app = require('../app');
 var debug = require('debug')('cotyping:server');
 var http = require('http');

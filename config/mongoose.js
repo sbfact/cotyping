@@ -1,6 +1,6 @@
 
 // 사용할 모듈을 로드한다.
-var config = require('./config'),
+var config = require('./config/env/development'),
 	mongoose = require('mongoose');
 
 // MongoDB 커넥션 풀을 이용해 커넥션 생성
