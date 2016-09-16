@@ -1,45 +1,49 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express           = require('express');
+var path              = require('path');
+var favicon           = require('serve-favicon');
+var logger            = require('morgan');
+var cookieParser      = require('cookie-parser');
+var bodyParser        = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var routes            = require('./routes/index');
+var users             = require('./routes/users');
 
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy;
+var passport          = require('passport');
+//var LocalStrategy     = require('passport-local').Strategy;
+var FacebookStrategy  = require('passport-facebook').Strategy;
 
+var config=require('./config/env/development');
 
-passport.use(new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password'
-}, function( email, password, done){
-    User.findOne({
-        where: {
-            email: email
-        }
-    }).then(function( user ){
-        if(!user){
-            return done(null, false);
-        }
-        if(user.password !== password){
-            return done(null, false);
-        }
-        return done(null, user);
-    }).catch(function( err ){
-        done(err, null);
-    });
-}));
+// passport.use(new LocalStrategy({
+//     usernameField: 'email',
+//     passwordField: 'password'
+// }, function( email, password, done){
+//     User.findOne({
+//         where: {
+//             email: email
+//         }
+//     }).then(function( user ){
+//         if(!user){
+//             return done(null, false);
+//         }
+//         if(user.password !== password){
+//             return done(null, false);
+//         }
+//         return done(null, user);
+//     }).catch(function( err ){
+//         done(err, null);
+//     });
+// }));
 
 passport.use(new FacebookStrategy({
-    clientID: '1811399525805272',
-    clientSecret: 'd2443cb5799b2e490b9cebe2d948bb5d',
-    callbackURL: 'http://localhost:3000/auth/facebook/callback',
-    profileFields: ['email', 'id', 'name', 'picture']
+    clientID: config.fb_api_key,
+    clientSecret: config.fb_api_secret,
+    callbackURL: config.callback_url,
+    //profileFields: ['email', 'id', 'name', 'picture']
 }, function( accessToken, refreshToken, fbProfile, done ){
+  if(config.use_database==='true'){
+    //디비를 사용하는 경우 로그인 정보를 디비에 담아주는 로직 구현
+  }
 
   console.log(fbProfile);
   done(null,fbProfile);
@@ -97,6 +101,7 @@ app.get('/logout',function(req,res){
 });
 
 function ensureAuthenticated(req,res,next){
+  console.log("로그인이 완료되었습니다.");
   if(req.isAuthenticated()){return next();}
   res.redirect('/');
 }
