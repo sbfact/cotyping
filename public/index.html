@@ -1,10 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>COTYPING</title>
-  </head>
-  <body>
-    <button onclick="location.href='/auth/facebook'">Facebook Login</button>
-  </body>
+<head>
+<title>Facebook Login JavaScript Example</title>
+<meta charset="UTF-8">
+<script type="text/javascript" src="javascripts/jquery.min.js"></script>
+<script type="text/javascript" src="javascripts/localLogin.js"></script>
+<script type="text/javascript" src="javascripts/tokenApi.js"></script>
+</head>
+<body>
+
+
+loginForm
+<div id="localLoginForm">
+    Email: <input type="text" name="email" class="email"><br>
+    Password: <input type="text" name="password" class="password"><br>
+    <button onclick="localLogin()">Login</button>
+</div>
+
+
+SignupForm
+<div id="localSignupForm">
+    Email: <input type="text" name="email" class="email"><br>
+    Password: <input type="text" name="password" class="password"><br>
+    <button onclick="localSignup()">Signup</button>
+</div>
+
+get user Email
+<button onclick="getEmail()">get Email</button>
+<button onclick="cleanEmail()">Email Clean</button>
+<div id="getEmail">
+</div>
+
+<button onclick="logout()">logout</button>
+</body>
 </html>
