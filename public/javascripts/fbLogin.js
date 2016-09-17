@@ -86,6 +86,7 @@
   function testAPI() {
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
+      console.log("\n=====================================\n")
       console.log('Successful login for: ' + response.name);
       document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
@@ -98,14 +99,22 @@
             if (response.status === 'connected') {
                 var fbAccessToken = response.authResponse.accessToken;
                 console.log(response.authResponse.accessToken);
-                FB.api('/me',{fields: 'email'} ,function(response) {
+                console.log("response1: ");
+                console.log(response);
+                //FB.api('/me',function(response) {
+                var url = '/me?fields=name,email';
+                FB.api(url,function(response) {
+                //FB.api('/me',{fields: 'email'} ,function(response) {
                     var fbUserEmail = response.email;
+                    var fbUserName  = response.name;
+                    console.log("response2: ");
                     console.log(response);
                     console.log(JSON.stringify(response));
                     document.getElementById('status').innerHTML =
                         'Thanks for logging in, ' + response.name + '!';
                     var postUserInformation = {
                         fbUserEmail: fbUserEmail,
+                        fbUserName: fbUserName,
                         fbAccessToken: fbAccessToken
                     };
                     console.log(postUserInformation);

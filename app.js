@@ -8,6 +8,7 @@ var users             = require('./app/users/user_routes');
 
 var config=require('./config/env/development');
 var mongoose          = require('mongoose');
+mongoose.Primise=global.Promise;
 mongoose.connect(config.host);
 var app = express();
 

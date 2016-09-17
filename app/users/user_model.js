@@ -5,6 +5,7 @@ var mongoose =require('mongoose'),
 
 var userSchema=new Schema({
   email:String,
+  name:String,
   localPassword:String,
   fbToken:String,
   jsonWebToken:String

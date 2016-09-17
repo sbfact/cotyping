@@ -131,6 +131,9 @@ function ensureAuthorized(req, res, next) {
 router.post('/login/fb',function(req,res,next){
   var fbUserEmail=req.body.fbUserEmail;
   var fbAccessToken=req.body.fbAccessToken;
+  var fbUserName=req.body.fbUserName;
+  console.log("user정보");
+  console.log(fbUserEmail);
 
   var findConditionfbUserEmail={
     email:fbUserEmail//email이 존재하는지 확인하기
@@ -144,7 +147,7 @@ router.post('/login/fb',function(req,res,next){
       });
     }else if(!user){
       console.log('user not found');
-      fbSignup(fbUserEmail, fbAccessToken, function(err,savedUser){
+      fbSignup(fbUserEmail, fbUserName, fbAccessToken, function(err,savedUser){
         console.log(1);
         if(err){
           res.json({
@@ -175,10 +178,12 @@ router.post('/login/fb',function(req,res,next){
   });
 });
 
-function fbSignup(fbUserEmail, fbAccessToken, next) {
+function fbSignup(fbUserEmail, fbUserName, fbAccessToken, next) {
     var userModel = new users();
     userModel.email = fbUserEmail;
+    userModel.name = fbUserName;
     userModel.fbToken = fbAccessToken;
+
     userModel.save(function (err, newUser) {
         newUser.jsonWebToken = jwt.sign(newUser, jwtSecret);
         newUser.save(function (err, savedUser) {
