@@ -49,6 +49,12 @@ router.post('/login/local/signup', function(req,res,next){
         type:false,
         data:"Error occured "+err
       });
+      console.log(user);
+    }else if(user){
+      res.json({
+        type:false,
+        data:"Email already exists"
+      });
     }else if(!user){
       localSignup(localEmail,localPassword, function(err,savedUser){
         if(err){

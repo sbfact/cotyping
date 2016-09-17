@@ -4,6 +4,7 @@
 <title>Facebook Login JavaScript Example</title>
 <meta charset="UTF-8">
 <script type="text/javascript" src="javascripts/jquery.min.js"></script>
+<script type="text/javascript" src="javascripts/fbLogin.js"></script>
 <script type="text/javascript" src="javascripts/localLogin.js"></script>
 <script type="text/javascript" src="javascripts/tokenApi.js"></script>
 </head>
@@ -15,6 +16,13 @@ loginForm
     Email: <input type="text" name="email" class="email"><br>
     Password: <input type="text" name="password" class="password"><br>
     <button onclick="localLogin()">Login</button>
+</div>
+
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button>
+<div onclick="facebookLogin()">FaceBook login button</div>
+<div onclick="facebookLogout()">FaceBook logout button</div>
+<div id="status">
 </div>
 
 
