@@ -144,7 +144,7 @@ router.post('/login/fb',function(req,res,next){
       });
     }else if(!user){
       console.log('user not found');
-      fbSignup(fbUserEamil, fbAccessToken, function(err,savedUser){
+      fbSignup(fbUserEmail, fbAccessToken, function(err,savedUser){
         console.log(1);
         if(err){
           res.json({
@@ -154,7 +154,7 @@ router.post('/login/fb',function(req,res,next){
         }else{
           res.json({
             type:true,
-            data:saveduser,
+            data:savedUser,
             token:savedUser.jsonWebToken
           });
         }
