@@ -3,7 +3,6 @@ var router = express.Router();
 
 var users=require('./user_model');
 
-var passport          = require('passport');
 var FacebookStrategy  = require('passport-facebook').Strategy;
 
 
@@ -181,7 +180,7 @@ router.post('/login/fb',function(req,res,next){
 function fbSignup(fbUserEmail, fbUserName, fbAccessToken, next) {
     var userModel = new users();
     userModel.email = fbUserEmail;
-    userModel.name = fbUserName;
+    userModel.userName = fbUserName;
     userModel.fbToken = fbAccessToken;
 
     userModel.save(function (err, newUser) {

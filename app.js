@@ -7,9 +7,12 @@ var bodyParser        = require('body-parser');
 var users             = require('./app/users/user_routes');
 
 var config=require('./config/env/development');
-var mongoose          = require('mongoose');
+var common=require('./config/env/common');
+
 mongoose.Primise=global.Promise;
 mongoose.connect(config.host);
+
+
 var app = express();
 
 // view engine setup
@@ -18,13 +21,20 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(session({
+  saveUninitialized: true,
+  resave: true,
+  secret: common.sessionSecret
+}));
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/user', users);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

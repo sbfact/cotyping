@@ -10,5 +10,5 @@ module.exports = {
 	// static 폴더
 	staticDir: './public',
 	// sessionSecret
-	sessionSecret: 'test'
+	sessionSecret: 'coty2016'
 };
