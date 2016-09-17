@@ -1,7 +1,8 @@
 var mongoose =require('mongoose'),
     //connection=require('../../config/mongoose'),
     Schema=mongoose.Schema;
-
+    // mongoose.Primise=global.Promise;
+    // mongoose.connect(config.host);
 var crypto = require("crypto");
 
 /*

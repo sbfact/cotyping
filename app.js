@@ -5,14 +5,10 @@ var logger            = require('morgan');
 var cookieParser      = require('cookie-parser');
 var bodyParser        = require('body-parser');
 var users             = require('./app/users/user_routes');
-
+var session           = require('express-session');
 var config=require('./config/env/development');
 var common=require('./config/env/common');
-
-mongoose.Primise=global.Promise;
-mongoose.connect(config.host);
-
-
+var passport = require('passport');
 var app = express();
 
 // view engine setup
@@ -32,6 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use(passport.initialize());
 app.use(passport.session());

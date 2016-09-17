@@ -27,4 +27,4 @@ module.exports = function() {
 
         users.saveOAuthUserProfile(req, providerUserProfile, done);
     }));
-}
+};

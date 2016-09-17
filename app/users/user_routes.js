@@ -10,185 +10,143 @@ var jwt = require('jsonwebtoken');
 var jwtSecret = 'secret';
 
 //로그인
-router.post('/login/local',function(req,res,next){
-  var localEmail=req.body.email;
-  var localPassword=req.body.password;
-
-  var findConditionLocalUser={
-    email:localEmail,
-    localPassword:localPassword
-  };//디비에서 유저정보를 찾기위한 조건(회원검색)
-
-  users.findOne(findConditionLocalUser).exec(function(err,user){
-    if(err){
-      res.json({type:false, data:"Error occured "+err});
-    }else if(!user){
-      res.json({type:false, data:"Incorrect email/password"});
-    }else if(user){
-      res.json({type:true, data: user, token: user.jsonWebToken});
-    }
-  });
-});
 
 
-router.post('/login/local/signup', function(req,res,next){
-  var localEmail=req.body.email;
-  var localPassword=req.body.password;
+module.exports = function(app) {
+  app.post('/login/local',function(req,res,next){
+    var localEmail=req.body.email;
+    var localPassword=req.body.password;
 
-  console.log(localEmail);
-  console.log(localPassword);
+    var findConditionLocalUser={
+      email:localEmail,
+      localPassword:localPassword
+    };//디비에서 유저정보를 찾기위한 조건(회원검색)
 
-  var findConditionLocalUser={
-    email:localEmail
-  };
-
-  users.findOne(findConditionLocalUser).exec(function(err,user){
-    if(err){
-      res.json({
-        type:false,
-        data:"Error occured "+err
-      });
-      console.log(user);
-    }else if(user){
-      res.json({
-        type:false,
-        data:"Email already exists"
-      });
-    }else if(!user){
-      localSignup(localEmail,localPassword, function(err,savedUser){
-        if(err){
-          res.json({
-            type:false,
-            data:"Error occured "+err
-          });
-        }else{
-          res.json({
-            type:true,
-            data:savedUser,
-            token:savedUser.jsonWebToken
-          });
-        }
-      });
-    }
-  });
-});
-
-function localSignup(userId, userPassword, next){
-  var userModel=new users();
-  userModel.email=userId;
-  userModel.localPassword=userPassword;
-  console.log(userModel);
-  userModel.save(function(err, newUser){
-    newUser.jsonWebToken=jwt.sign(newUser, jwtSecret);
-    newUser.save(function(err,savedUser){
-      next(err,savedUser);
+    users.findOne(findConditionLocalUser).exec(function(err,user){
+      if(err){
+        res.json({type:false, data:"Error occured "+err});
+      }else if(!user){
+        res.json({type:false, data:"Incorrect email/password"});
+      }else if(user){
+        res.json({type:true, data: user, token: user.jsonWebToken});
+      }
     });
   });
-}
-//토큰값을 가지고있을때 다시 로그인할필요가 없음을 의미한다.
-router.get('/me', ensureAuthorized, function(req,res,next){
-  var findCoditionToken={
-    jsonWebToken:req.token
-  };
 
-  console.log(req.token);
-  users.findOne(findConditionToken,function(err,user){
+
+  app.post('/login/local/signup', function(req,res,next){
+    var localEmail=req.body.email;
+    var localPassword=req.body.password;
+
+    console.log(localEmail);
+    console.log(localPassword);
+
+    var findConditionLocalUser={
+      email:localEmail
+    };
+
+    users.findOne(findConditionLocalUser).exec(function(err,user){
       if(err){
         res.json({
           type:false,
-          data: "Error occured: "+ err
+          data:"Error occured "+err
         });
-      }else{
-        console.log("me : "+ user);
+        console.log(user);
+      }else if(user){
         res.json({
-          type:true,
-          data:user
+          type:false,
+          data:"Email already exists"
+        });
+      }else if(!user){
+        localSignup(localEmail,localPassword, function(err,savedUser){
+          if(err){
+            res.json({
+              type:false,
+              data:"Error occured "+err
+            });
+          }else{
+            res.json({
+              type:true,
+              data:savedUser,
+              token:savedUser.jsonWebToken
+            });
+          }
         });
       }
+    });
   });
-});
 
-function ensureAuthorized(req, res, next) {
-    var bearerToken;
-    var bearerHeader = req.headers["authorization"];
-    console.log(bearerHeader);
-    if (typeof bearerHeader !== "undefined") {
-        var bearer = bearerHeader.split(" ");
-        bearerToken = bearer[1];
-        req.token = bearerToken;
-        next();
-    } else {
-        res.send(403);
-    }
-}
-
-
-/***********************************
- *           FB Login              *
- ***********************************/
-
-router.post('/login/fb',function(req,res,next){
-  var fbUserEmail=req.body.fbUserEmail;
-  var fbAccessToken=req.body.fbAccessToken;
-  var fbUserName=req.body.fbUserName;
-  console.log("user정보");
-  console.log(fbUserEmail);
-
-  var findConditionfbUserEmail={
-    email:fbUserEmail//email이 존재하는지 확인하기
-  };
-
-  users.findOne(findConditionfbUserEmail).exec(function(err,user){
-    if(err){
-      res.json({
-        type:false,
-        data:"Error occured "+err
+  function localSignup(userId, userPassword, next){
+    var userModel=new users();
+    userModel.email=userId;
+    userModel.localPassword=userPassword;
+    console.log(userModel);
+    userModel.save(function(err, newUser){
+      newUser.jsonWebToken=jwt.sign(newUser, jwtSecret);
+      newUser.save(function(err,savedUser){
+        next(err,savedUser);
       });
-    }else if(!user){
-      console.log('user not found');
-      fbSignup(fbUserEmail, fbUserName, fbAccessToken, function(err,savedUser){
-        console.log(1);
+    });
+  }
+  //토큰값을 가지고있을때 다시 로그인할필요가 없음을 의미한다.
+  app.get('/me', ensureAuthorized, function(req,res,next){
+    var findCoditionToken={
+      jsonWebToken:req.token
+    };
+
+    console.log(req.token);
+    users.findOne(findConditionToken,function(err,user){
         if(err){
           res.json({
             type:false,
-            data:"Error occured "+err
+            data: "Error occured: "+ err
           });
         }else{
+          console.log("me : "+ user);
           res.json({
             type:true,
-            data:savedUser,
-            token:savedUser.jsonWebToken
+            data:user
           });
         }
-      });
-    }else if(user){
-
-      console.log('user');
-      console.log(user);
-      user.fbToken=fbAccessToken;
-      user.save(function(err,savedUser){
-        res.json({
-          type:true,
-          data:user,
-          token:user.jsonWebToken
-        });
-      });
-    }
-  });
-});
-
-function fbSignup(fbUserEmail, fbUserName, fbAccessToken, next) {
-    var userModel = new users();
-    userModel.email = fbUserEmail;
-    userModel.userName = fbUserName;
-    userModel.fbToken = fbAccessToken;
-
-    userModel.save(function (err, newUser) {
-        newUser.jsonWebToken = jwt.sign(newUser, jwtSecret);
-        newUser.save(function (err, savedUser) {
-            next(err, savedUser);
-        });
     });
-}
+  });
 
-module.exports=router;
+  function ensureAuthorized(req, res, next) {
+      var bearerToken;
+      var bearerHeader = req.headers["authorization"];
+      console.log(bearerHeader);
+      if (typeof bearerHeader !== "undefined") {
+          var bearer = bearerHeader.split(" ");
+          bearerToken = bearer[1];
+          req.token = bearerToken;
+          next();
+      } else {
+          res.send(403);
+      }
+  }
+
+  app.get('/oauth/facebook', passport.authenticate('facebook', {
+      failureRedirect: '/signin'
+  }));
+
+  app.get('/oauth/facebook/callback', passport.authenticate('facebook',  {
+      scope: [ 'email' ],
+      failureRedirect: '/signin',
+      successRedirect : '/'
+  }));
+
+  // google
+  app.get('/oauth/google', passport.authenticate('google', {
+      failureRedirect: '/signin',
+      scope: [
+          'https://www.googleapis.com/auth/userinfo.profile',
+          'https://www.googleapis.com/auth/userinfo.email'
+          ],
+  }));
+
+  app.get('/oauth/google/callback', passport.authenticate('google', {
+      failureFlash: '/signin',
+      successRedirect: '/'
+  }));
+
+};
